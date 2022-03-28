@@ -1,5 +1,22 @@
 import requests
 
+# -----------------------------------------------------------------------
+# вместо того, что бы делать еще один класс, обойдёмся без него - подумайте, почему и как
+activeGames = {}  # Тут будем накапливать все активные игры. У пользователя может быть только одна активная игра
+
+
+def newGame(chatID, newGame):
+    activeGames.update({chatID: newGame})
+    return newGame
+
+
+def getGame(chatID):
+    return activeGames.get(chatID)
+
+
+def stopGame(chatID):
+    activeGames.pop(chatID)
+
 
 # -----------------------------------------------------------------------
 class Card:
@@ -18,13 +35,16 @@ class Card:
             self.color = self.get_color_card()
             self.__imagesPNG_URL = card["images"]["png"]
             self.__imagesSVG_URL = card["images"]["svg"]
+            # print(self.value, self.suit, self.code)
 
         elif isinstance(card, str):  # карту передали строкой, в формате "2S"
             self.__card_JSON = None
             self.code = card
 
             value = card[0]
-            if value == "J":
+            if value == "0":
+                self.value = "10"
+            elif value == "J":
                 self.value = "JACK"
             elif value == "Q":
                 self.value = "QUEEN"
@@ -32,23 +52,32 @@ class Card:
                 self.value = "KING"
             elif value == "A":
                 self.value = "ACE"
-            elif value == "J":
-                self.value = "JACK"
+            elif value == "X":
+                self.value = "JOKER"
             else:
                 self.value = value
 
             suit = card[1]
-            if suit == "S":
-                self.suit = "SPADES"  # Пики
-            elif suit == "C":
-                self.suit = "CLUBS"  # Крести
-            elif suit == "H":
-                self.suit = "HEARTS"  # Черви
-            elif suit == "D":
-                self.suit = "DIAMONDS"  # Буби
+            if suit == "1":
+                self.suit = ""
+                self.color = "BLACK"
 
-            self.cost = self.get_cost_card()
-            self.color = self.get_color_card()
+            elif suit == "2":
+                self.suit = ""
+                self.color = "RED"
+
+            else:
+                if suit == "S":
+                    self.suit = "SPADES"  # Пики
+                elif suit == "C":
+                    self.suit = "CLUBS"  # Крести
+                elif suit == "H":
+                    self.suit = "HEARTS"  # Черви
+                elif suit == "D":
+                    self.suit = "DIAMONDS"  # Буби
+
+                self.cost = self.get_cost_card()
+                self.color = self.get_color_card()
 
     def get_cost_card(self):
         if self.value == "JACK":
@@ -77,8 +106,8 @@ class Card:
 
 # -----------------------------------------------------------------------
 class Game21:
-    def __init__(self, deck_count=1):
-        new_pack = self.new_pack(deck_count)  # в конструкторе создаём новую пачку из deck_count-колод
+    def __init__(self, deck_count=1, jokers_enabled=False):
+        new_pack = self.new_pack(deck_count, jokers_enabled)  # в конструкторе создаём новую пачку из deck_count-колод
         if new_pack is not None:
             self.pack_card = new_pack  # сформированная колода
             self.remaining = new_pack["remaining"],  # количество оставшихся карт в колоде
@@ -88,8 +117,9 @@ class Game21:
             self.status = None  # статус игры, True - игрок выиграл, False - Игрок проиграл, None - Игра продолжается
 
     # ---------------------------------------------------------------------
-    def new_pack(self, deck_count):
-        response = requests.get(f"https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count={deck_count}")
+    def new_pack(self, deck_count, jokers_enabled=False):
+        txtJoker = "&jokers_enabled=true" if jokers_enabled else ""
+        response = requests.get(f"https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count={deck_count}"+txtJoker)
         # создание стопки карт из "deck_count" колод по 52 карты
         if response.status_code != 200:
             return None
