@@ -104,6 +104,26 @@ class Card:
             return "RED"
 
 
+class GameRPS:
+    values = ["Камень", "Ножницы", "Бумага"]
+
+    def __init__(self):
+        self.computerСhoice = self.__class__.getRandomСhoice()
+
+    @classmethod
+    def getRandomСhoice(cls):
+        lenValues = len(cls.values)
+        import random
+        rndInd = random.randint(0, lenValues-1)
+        return cls.values[rndInd]
+
+
+    def searchWinner(self, player1Сhoice):
+        winner = None
+        winner = self.computerСhoice == player1Сhoice
+
+        return winner
+
 # -----------------------------------------------------------------------
 class Game21:
     def __init__(self, deck_count=1, jokers_enabled=False):

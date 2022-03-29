@@ -11,12 +11,12 @@ class KeyboardButton:
 class Users:
     activeUsers = {}
 
-    def __init__(self, chat_id, json):
-        self.id = json["id"]
-        self.isBot = json["is_bot"]
-        self.firstName = json["first_name"]
-        self.userName = json["username"]
-        self.languageCode = json["language_code"]
+    def __init__(self, chat_id, user_json):
+        self.id = user_json["id"]
+        self.isBot = user_json["is_bot"]
+        self.firstName = user_json["first_name"]
+        self.userName = user_json["username"]
+        self.languageCode = user_json["language_code"]
 
         self.__class__.activeUsers[chat_id] = self
 

@@ -46,10 +46,12 @@ def get_text_messages(message):
             send_help(chat_id)
 
         elif ms_text == "Прислать собаку":
-            bot.send_photo(chat_id, photo=get_dogURL(), caption="Вот тебе собачка!")
+            bot.send_photo(chat_id, photo=get_foxURL(), caption="Вот тебе собачка!")
 
         elif ms_text == "Прислать анекдот":
-            bot.send_message(chat_id, text=get_anekdot())
+            # bot.send_message(chat_id, text=get_anekdot())
+            bot.send_message(chat_id, text=get_news())
+
 
         elif ms_text == "Прислать фильм":
             send_film(chat_id)
@@ -184,6 +186,33 @@ def get_anekdot():
     else:
         return ""
 
+# -----------------------------------------------------------------------
+def get_news():
+    array_anekdots = []
+    req_anek = requests.get('https://www.banki.ru/news/lenta')
+    if req_anek.status_code == 200:
+        soup = bs4.BeautifulSoup(req_anek.text, "html.parser")
+        result_find = soup.select('.doFpcq')
+        for result in result_find:
+            print(result)
+
+
+
+            # array_anekdots.append(result.getText().strip())
+    if len(array_anekdots) > 0:
+        return array_anekdots[0]
+    else:
+        return ""
+
+# -----------------------------------------------------------------------
+def get_foxURL():
+    url = ""
+    req = requests.get('https://randomfox.ca/floof/')
+    if req.status_code == 200:
+        r_json = req.json()
+        url = r_json['image']
+        # url.split("/")[-1]
+    return url
 # -----------------------------------------------------------------------
 def get_dogURL():
     url = ""
