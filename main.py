@@ -8,7 +8,7 @@ from telebot import types
 import requests
 import bs4
 import botGames  # бот-игры, файл botGames.py
-from menuBot import Menu  # в этом модуле есть код, создающий экземпляры классов описывающих моё меню
+from menuBot import Menu, Users  # в этом модуле есть код, создающий экземпляры классов описывающих моё меню
 import DZ  # домашнее задание от первого урока
 
 bot = telebot.TeleBot('5149965447:AAF3z_oB2sM6Cch1scdWe5AV_aAV3bWmXiA')  # Создаем экземпляр бота
@@ -30,6 +30,10 @@ def get_text_messages(message):
 
     chat_id = message.chat.id
     ms_text = message.text
+
+    cur_user = Users.getUser(chat_id)
+    if cur_user == None:
+        cur_user = Users(chat_id, message.json["from"])
 
     result = goto_menu(chat_id, ms_text)  # попытаемся использовать текст как команду меню, и войти в него
     if result == True:
@@ -146,6 +150,10 @@ def send_help(chat_id):
     markup.add(btn1)
     img = open('Швец Андрей.png', 'rb')
     bot.send_photo(chat_id, img, reply_markup=markup)
+
+    bot.send_message(chat_id, "Активные пользователи чат-бота:")
+    for el in Users.activeUsers:
+        bot.send_message(chat_id, Users.activeUsers[el])
 
 # -----------------------------------------------------------------------
 def send_film(chat_id):
