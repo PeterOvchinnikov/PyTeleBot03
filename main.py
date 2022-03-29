@@ -79,6 +79,18 @@ def get_text_messages(message):
             goto_menu(chat_id, "Выход")
             return
 
+
+        elif ms_text in botGames.GameRPS.values:
+            gameRSP = botGames.getGame(chat_id)
+            if gameRSP == None:  # если мы случайно попали в это меню, а объекта с игрой нет
+                goto_menu(chat_id, "Выход")
+                return
+            text_game = gameRSP.playerChoice(ms_text)
+            bot.send_message(chat_id, text=text_game)
+            # bot.send_photo(chat_id, photo=, caption=text_game, parse_mode='HTML')
+            # botGames.stopGame(chat_id)
+            # goto_menu(chat_id, "Выход")
+
         elif ms_text == "Задание-1":
             DZ.dz1(bot, chat_id)
 
@@ -129,6 +141,14 @@ def goto_menu(chat_id, name_menu):
             text_game = game21.get_cards(2)  # просим 2 карты в начале игры
             bot.send_media_group(chat_id, media=getMediaCards(game21))  # получим и отправим изображения карт
             bot.send_message(chat_id, text=text_game)
+
+        elif target_menu.name == "Камень, ножницы, бумага":
+            gameRSP = botGames.newGame(chat_id, botGames.GameRPS())  # создаём новый экземпляр игры
+            text_game = "<b>Победитель определяется по следующим правилам:</b>\n" \
+                        "1. Камень побеждает ножницы\n" \
+                        "2. Бумага побеждает камень\n" \
+                        "3. Ножницы побеждают бумагу"
+            bot.send_photo(chat_id, photo="https://i.ytimg.com/vi/Gvks8_WLiw0/maxresdefault.jpg", caption=text_game, parse_mode='HTML')
 
         return True
     else:
