@@ -172,6 +172,9 @@ class GameRPS:
     def __init__(self):
         self.computerChoice = self.__class__.getRandomChoice()
 
+    def newGame(self):
+        self.computerChoice = self.__class__.getRandomChoice()
+
     @classmethod
     def getRandomChoice(cls):
         lenValues = len(cls.values)

@@ -181,9 +181,6 @@ def get_text_messages(message):
             text_game = gameRSP.playerChoice(ms_text)
             bot.send_message(chat_id, text=text_game)
             gameRSP.newGame()
-            # bot.send_photo(chat_id, photo=, caption=text_game, parse_mode='HTML')
-            # botGames.stopGame(chat_id)
-            # goto_menu(chat_id, "Выход")
 
         elif ms_text == "Задание-1":
             DZ.dz1(bot, chat_id)

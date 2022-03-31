@@ -37,6 +37,8 @@ def my_inputInt(bot, chat_id, txt, ResponseHandler):
 def my_inputInt_SecondPart(message, botQuestion, txtQuestion, ResponseHandler):
     chat_id = message.chat.id
     try:
+        if message.content_type != "text":
+            raise ValueError
         var_int = int(message.text)
         # данные корректно преобразовались в int, можно вызвать обработчик ответа, и передать туда наше число
         ResponseHandler(botQuestion, chat_id, var_int)
