@@ -23,6 +23,10 @@ class Users:
     def __str__(self):
         return f"Name user: {self.firstName}   id: {self.userName}   lang: {self.languageCode}"
 
+    def getUserHTML(self):
+        return f"Name user: {self.firstName}   id: <a href='https://t.me/{self.userName}'>{self.userName}</a>   lang: {self.languageCode}"
+
+
     @classmethod
     def getUser(cls, chat_id):
         return cls.activeUsers.get(chat_id)

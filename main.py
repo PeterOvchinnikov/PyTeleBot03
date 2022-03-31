@@ -1,6 +1,4 @@
 # Телеграм-бот v.004
-import json
-from gettext import find
 from io import BytesIO
 
 import telebot  # pyTelegramBotAPI 4.3.1
@@ -19,8 +17,103 @@ bot = telebot.TeleBot('5149965447:AAF3z_oB2sM6Cch1scdWe5AV_aAV3bWmXiA')  # Со�
 @bot.message_handler(commands="start")
 def command(message, res=False):
     chat_id = message.chat.id
+    bot.send_sticker(chat_id, "CAACAgIAAxkBAAIaeWJEeEmCvnsIzz36cM0oHU96QOn7AAJUAANBtVYMarf4xwiNAfojBA")
     txt_message = f"Привет, {message.from_user.first_name}! Я тестовый бот для курса программирования на языке Python"
     bot.send_message(chat_id, text=txt_message, reply_markup=Menu.getMenu(chat_id, "Главное меню").markup)
+
+
+# -----------------------------------------------------------------------
+# Получение стикеров от юзера
+@bot.message_handler(content_types=['sticker'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    sticker = message.sticker
+    bot.send_message(message.chat.id, sticker)
+
+    # глубокая инспекция объекта
+    # import inspect,pprint
+    # i = inspect.getmembers(sticker)
+    # pprint.pprint(i)
+
+
+# -----------------------------------------------------------------------
+# Получение аудио от юзера
+@bot.message_handler(content_types=['audio'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    audio = message.audio
+    bot.send_message(chat_id, audio)
+
+# -----------------------------------------------------------------------
+# Получение голосовухи от юзера
+@bot.message_handler(content_types=['voice'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    voice = message.voice
+    bot.send_message(message.chat.id, voice)
+
+
+# -----------------------------------------------------------------------
+# Получение фото от юзера
+@bot.message_handler(content_types=['photo'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    photo = message.photo
+    bot.send_message(message.chat.id, photo)
+
+
+# -----------------------------------------------------------------------
+# Получение видео от юзера
+@bot.message_handler(content_types=['video'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    video = message.video
+    bot.send_message(message.chat.id, video)
+
+
+# -----------------------------------------------------------------------
+# Получение документов от юзера
+@bot.message_handler(content_types=['document'])
+def get_messages(message):
+    chat_id = message.chat.id
+    mime_type = message.document.mime_type
+    bot.send_message(chat_id, "Это " + message.content_type + " (" + mime_type + ")")
+
+    document = message.document
+    bot.send_message(message.chat.id, document)
+    if message.document.mime_type == "video/mp4":
+        bot.send_message(message.chat.id, "This is a GIF!")
+
+# -----------------------------------------------------------------------
+# Получение координат от юзера
+@bot.message_handler(content_types=['location'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    location = message.location
+    bot.send_message(message.chat.id, location)
+
+
+# -----------------------------------------------------------------------
+# Получение контактов от юзера
+@bot.message_handler(content_types=['contact'])
+def get_messages(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Это " + message.content_type)
+
+    contact = message.contact
+    bot.send_message(message.chat.id, contact)
 
 
 # -----------------------------------------------------------------------
@@ -80,13 +173,14 @@ def get_text_messages(message):
             return
 
 
-        elif ms_text in botGames.GameRPS.values:
+        elif ms_text in botGames.GameRPS.values:  # реализация игрыы Камень-ножницы-бумага
             gameRSP = botGames.getGame(chat_id)
             if gameRSP == None:  # если мы случайно попали в это меню, а объекта с игрой нет
                 goto_menu(chat_id, "Выход")
                 return
             text_game = gameRSP.playerChoice(ms_text)
             bot.send_message(chat_id, text=text_game)
+            gameRSP.newGame()
             # bot.send_photo(chat_id, photo=, caption=text_game, parse_mode='HTML')
             # botGames.stopGame(chat_id)
             # goto_menu(chat_id, "Выход")
@@ -175,7 +269,7 @@ def send_help(chat_id):
 
     bot.send_message(chat_id, "Активные пользователи чат-бота:")
     for el in Users.activeUsers:
-        bot.send_message(chat_id, Users.activeUsers[el])
+        bot.send_message(chat_id, Users.activeUsers[el].getUserHTML(), parse_mode='HTML')
 
 # -----------------------------------------------------------------------
 def send_film(chat_id):
