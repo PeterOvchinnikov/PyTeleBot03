@@ -1,3 +1,26 @@
+# ======================================= модуль ДЗ
+# -----------------------------------------------------------------------
+def get_text_messages(bot, cur_user, message):
+    chat_id = message.chat.id
+    ms_text = message.text
+
+    if ms_text == "Задание-1":
+        dz1(bot, chat_id)
+
+    elif ms_text == "Задание-2":
+        dz2(bot, chat_id)
+
+    elif ms_text == "Задание-3":
+        dz3(bot, chat_id)
+
+    elif ms_text == "Задание-4":
+        dz4(bot, chat_id)
+
+    elif ms_text == "Задание-5":
+        dz5(bot, chat_id)
+
+    elif ms_text == "Задание-6":
+        dz6(bot, chat_id)
 
 # -----------------------------------------------------------------------
 def dz1(bot, chat_id):

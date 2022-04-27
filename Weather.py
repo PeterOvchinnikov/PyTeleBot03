@@ -1,5 +1,6 @@
 import SECRET  # секретные ключи, пароли
 
+
 def get_wind_direction(deg, advanced_result=False):
     l = ['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ']
     l_adv = ['Северный', 'Северо-Восточный', 'Восточный', 'Юго-Восточный', 'Южный', 'Юго-Западный', 'Западный', 'Северо-Западный']
@@ -15,12 +16,24 @@ def get_wind_direction(deg, advanced_result=False):
     return res
 
 
+def geohash(latitude, longitude, datedow):
+    '''Compute geohash() using the Munroe algorithm.
+
+    >>> geohash(37.421542, -122.085589, b'2005-05-26-10458.68')
+    37.857713 -122.544543
+
+    '''
+    # https://xkcd.com/426/
+    h = hashlib.md5(datedow, usedforsecurity=False).hexdigest()
+    p, q = [('%f' % float.fromhex('0.' + x)) for x in (h[:16], h[16:32])]
+    print('%d%s %d%s' % (latitude, p[1:], longitude, q[1:]))
+
+
 class OpenWeatherMap():
     # для получения своего бесплатного ключа пройдите регистрацию: https://home.openweathermap.org/users/sign_up
 
     def __init__(self):
         pass
-
 
     # # Проверка наличия в базе информации о нужном населенном пункте
     # def getAPI_cityID(self, s_city_name, type='like', units='metric', lang='ru'):
@@ -92,12 +105,12 @@ class OpenWeatherMap():
     #         print("Exception (forecast):", e)
     #         pass
 
+
 class WeatherFromPyOWN:
     # для получения своего бесплатного ключа пройдите регистрацию: https://home.openweathermap.org/users/sign_up
 
     def __init__(self):
         pass
-
 
     def getWeatherAtCoords(self, lat, lon):
         text = ""
