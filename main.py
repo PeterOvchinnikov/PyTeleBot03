@@ -22,6 +22,7 @@ def command(message):
     bot.send_message(chat_id, text=txt_message, reply_markup=Menu.getMenu(chat_id, "Главное меню").markup)
 
 
+
 # -----------------------------------------------------------------------
 # Получение стикеров от юзера
 @bot.message_handler(content_types=['sticker'])
@@ -57,8 +58,12 @@ def get_messages(message):
     bot.send_message(chat_id, "Это " + message.content_type)
 
     voice = message.voice
-    bot.send_message(message.chat.id, voice)
+    # bot.send_message(message.chat.id, voice)
 
+    import speech
+    fileInfo = bot.get_file(voice.file_id)
+    audioData = bot.download_file(fileInfo.file_path)
+    bot.send_message(chat_id, speech.getTextFromVoice(audioData))
 
 # -----------------------------------------------------------------------
 # Получение фото от юзера
