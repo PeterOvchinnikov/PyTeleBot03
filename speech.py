@@ -1,4 +1,4 @@
-import speech_recognition as sr
+import speech_recognition as sr  # SpeechRecognition 3.8.1
 import threading
 from datetime import datetime
 
@@ -14,13 +14,17 @@ def getAudioFromURL(URL):
 # -----------------------------------------------------------------------
 def getTextFromVoice(audioData):  # распознавание голоса
     import tempfile
-    from pydub import AudioSegment
+    from pydub import AudioSegment  # для работы требуется ffmpeg
 
     with tempfile.NamedTemporaryFile() as temp_ogg:
         with tempfile.NamedTemporaryFile() as temp_wav:
             temp_ogg.write(audioData)
             temp_ogg.seek(0)
-            AudioSegment.from_file_using_temporary_files(temp_ogg, 'ogg').export(temp_wav, format='wav')
+            try:
+                AudioSegment.from_file_using_temporary_files(temp_ogg, 'ogg').export(temp_wav, format='wav')
+            except FileNotFoundError as e:
+                print("Установите и проверьте работоспособность библиотеки ffmpeg!")
+                return "Установите и проверьте работоспособность библиотеки ffmpeg!"
 
             r = sr.Recognizer()
             # with sr.Microphone(device_index=2) as source:
@@ -34,19 +38,21 @@ def getTextFromVoice(audioData):  # распознавание голоса
                     return "Ошибка распознавания:\n" + str(e)
 
 
+# -----------------------------------------------------------------------
 def say_text(msg, file=None):  # Функция, которая будет произносить произвольный текст
     import pyttsx3
 
     tts = pyttsx3.init()
     tts.setProperty('voice', 'ru')  # Наш голос по умолчанию
-    tts.setProperty('rate', 200)  # Скорость в % (может быть > 100)
-    tts.setProperty('volume', 0.5)  # Громкость (значение от 0 до 1)
+    tts.setProperty('rate', 180)  # Скорость в % (может быть > 100)
+    tts.setProperty('volume', 1)  # Громкость (значение от 0 до 1)
 
     if file is None:
         tts.say(msg)
         tts.runAndWait()  # Воспроизвести очередь реплик и дождаться окончания речи
     else:
         tts.save_to_file(msg, file)
+        tts.runAndWait()
 
 
 # -----------------------------------------------------------------------
@@ -92,8 +98,15 @@ def get_text_messages(bot, cur_user, message):
     ms_text = message.text
 
     # ======================================= реализация игры в 21
-    if ms_text == "Текущее время!":
-        pass
+    if ms_text == "Текущее время":
+        name_audio = 'Текущее время.ogg'
+        say_time(file=name_audio)
+        with open(name_audio, 'rb') as audio:
+            # temp_wav.seek(0)
+            # size = len(temp_wav.read())
+            bot.send_chat_action(message.from_user.id, 'upload_audio')
+            bot.send_audio(chat_id, audio)
+
 
 
 # -----------------------------------------------------------------------
